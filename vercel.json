@@ -14,12 +14,6 @@
       "dest": "chatbot_project/wsgi.py"
     }
   ],
-  "functions": {
-    "api": {
-      "runtime": "vercel-python@0.24.0",
-      "memory": 1024
-    }
-  },
   "env": {
     "DJANGO_SETTINGS_MODULE": "chatbot_project.settings",
     "VERCEL_ENV": "production"
