@@ -446,7 +446,7 @@ Coal production escalated from 70 million tons to 400 million tons, and equivale
             const currentWord = words[currentWordIndex];
             const updatedWord = currentWord.substring(0, letterIndex + 1)
             // + currentWord.substring(letterIndex + 1);
-            console.log(updatedWord);
+          //  console.log(updatedWord);
             auto_change.innerText = updatedWord
             // Move to the next letter or word if all letters are removed
             letterIndex++;
@@ -515,7 +515,7 @@ Coal production escalated from 70 million tons to 400 million tons, and equivale
                 }
                 function scrollToBottom() {
                     const chatContainer = document.getElementById('main_chats');
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    chatContainer.scrollTop = chatContainer.scrollHeight ;
                 }
                 // Retrieve CSRF token from cookie
                 const csrfToken = getCookie('csrftoken');
@@ -534,6 +534,8 @@ Coal production escalated from 70 million tons to 400 million tons, and equivale
                 inputBox.name = 'message'
                 inputBox.style.border = '2px solid black'
                 inputBox.style.padding = '0.34rem'
+                inputBox.style.position = 'relative';
+                inputBox.style.zIndex = 100
                 const btn = document.createElement('button')
                 btn.innerText = 'Send'
                 btn.style.backgroundColor = 'rgb(149,69,58)'
@@ -584,20 +586,20 @@ Coal production escalated from 70 million tons to 400 million tons, and equivale
                     scrollToBottom()
 
                     // await fetch('https://django-chatbot2-f4ld.onrender.com', {
-                    await fetch('http://127.0.0.1:8000', {
-                        // headers: {
-                        //     'Content-Type': 'application/x-www-form-urlencoded',
-                        //     'X-CSRFToken': csrfToken2
-                        // },
-                        method: 'POST',
-                        // body: new URLSearchParams({
-                        //     'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                        //     'message': inputData
-                        // })
-                    }).then((data) => data.json()).then((rData) => {
-
-                        console.log(rData[0].message)
-                        console.log(rData[0])
+                        await fetch('http://127.0.0.1:8000', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded', 
+    },
+    body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value, // Ensure this matches your CSRF token input name
+        'message': inputData 
+       })
+    })
+.then((data) => data.json()).then((rData) => {
+    if(rData.message){
+                        console.log(rData.message)
+                        console.log(rData)
                         const p = document.createElement('p');
                         const p2 = document.createElement('p')
                         const div = document.createElement('div')
@@ -607,8 +609,8 @@ Coal production escalated from 70 million tons to 400 million tons, and equivale
                         // p.innerHTML = rData.message + "For Source Code <a href='" + rData.url + "'>Click here</a>";
                         let count2 = 0;
                         const intervalId = setInterval(() => {
-                            if (count2 < rData[0].message.length) {
-                                p.innerHTML += `${rData[0].message[count2]}`;
+                            if (count2 < rData.message.length) {
+                                p.innerHTML += `${rData.message[count2]}`;
                                 count2++;
                                 scrollToBottom()
                             } else {
@@ -628,8 +630,49 @@ Coal production escalated from 70 million tons to 400 million tons, and equivale
                         p.style.wordWrap = 'break-word';
                         main_chats.appendChild(div)
                         scrollToBottom()
+                    }
+                    if(rData.image){
+                        console.log('image format');
+                        const img = document.createElement('img');
+                        img.src = 'data:image/png;base64,'+rData.image;
+                        img.alt = 'Kriging map';
+                        img.style.cursor = 'pointer';
+                        // img.addEventListener('click',()=>{
+                            // alert('downloaded')
+                            // <a href="/images/img.jpg" download>
+                                const a = document.createElement('a')
+                                a.href = 'data:image/png;base64,'+rData.image;
+                                a.download = 'data:image/png;base64,'+rData.image;
+                                a.textAlign = 'center'
+                                a.style.width = '100vw';
+                                a.style.position = 'relative'
+                                a.style.zIndex = 0
+                                a.textContent = 'Download';
+                                // a.style.textDecoration = 'underline'
+                                a.style.marginBottom = '9px'
+                                a.style.margin = '0 auto'
+                                // a.style.backgroundColor = 'red'
+                                a.style.backgroundColor = '#C09776';
+                                a.style.padding = '5px';
+                                a.style.position = 'relative';
+                                a.style.top = '8px'
+                                a.style.left = '20px'
+                                const imgDiv = document.createElement('div')
+                                imgDiv.style.marginBottom = '20px'
+                                // imgDiv.style.display = 'flex';
+                                // imgDiv.style.flexDirection = 'column';
+                                // imgDiv.style.alignItems = 'center'
+                                imgDiv.appendChild(img);
+                                imgDiv.appendChild(a);
+                        // })
+                        // main_chats.appendChild(img);
+                        // main_chats.appendChild(a);
+                        main_chats.appendChild(imgDiv);
+                        scrollToBottom()
+                    }
                     }).catch((er) => {
-                        alert(er.message)
+                        alert('different error: ')
+                        console.log(er.message)
                     })
                     inputBox.value = '';
                 });

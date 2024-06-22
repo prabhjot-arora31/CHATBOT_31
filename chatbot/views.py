@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
+from .chatbot_logic import get_response_for_query
 # from django.http import HttpResponse
 from django.http import JsonResponse
 # Create your views here.
@@ -8,11 +8,13 @@ from django.http import JsonResponse
 def chat(request):
         if request.method == 'POST':
          message = request.POST.get('message')
+         response_data = get_response_for_query(message)
          print(message)
-         data = [
-         {'message': 'Hello...This is a simple message. The model is in a development phase. Every Time it will generate the same response for your query. Please wait for the full development of this Chat-Bot.',
-         'url': 'https://github.com/prabhjot-arora31/D_C/'}]
-         return JsonResponse(data,safe=False)
+         if isinstance(response_data, str) and response_data.startswith('iVBOR'):  # Check if response is a base64 image
+            return JsonResponse({'image': response_data})
+         else:
+            return JsonResponse({'message': response_data})
+        #  return JsonResponse(data,safe=False)
         elif request.method == 'GET':
          return render(request,'home.html')
         else:
